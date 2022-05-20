@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.concurrent.TimeUnit;
 
@@ -51,6 +52,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .rememberMe()
                     .tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(30))
                     .key("customkey")
+                .and()
+                .logout()
+                    .logoutUrl("/logout")
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")) // the http method is GET because csrf is disable
+                    .clearAuthentication(true)
+                    .invalidateHttpSession(true)
+                    .deleteCookies()
+                    .logoutSuccessUrl("/login");
         ;
     }
 
