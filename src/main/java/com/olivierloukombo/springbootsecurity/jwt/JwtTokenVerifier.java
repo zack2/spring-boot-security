@@ -34,9 +34,10 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             Jws<Claims> claimsJws = Jwts.parserBuilder()
                    // .parser()
                     .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                    // .parseClaimsJws(token);
                     .build()
                     .parseClaimsJws(token);
-                   // .parseClaimsJws(token);
+
 
             Claims body = claimsJws.getBody();
             String username = body.getSubject();
@@ -54,5 +55,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
         }catch (JwtException e){
             throw new IllegalStateException("Untrusted Token" + token);
         }
+
+        filterChain.doFilter(request, response);
     }
 }
